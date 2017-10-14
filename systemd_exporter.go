@@ -6,8 +6,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
-	"strings"
 	"net/http"
+	"strings"
 )
 
 type metric struct {
@@ -49,7 +49,7 @@ func (c *systemdCollector) Collect(ch chan<- prometheus.Metric) {
 					}
 				}
 			} else {
-				log.Print(err)
+				log.Print(propName, ":", err)
 			}
 		}
 	}
@@ -64,8 +64,28 @@ func newSystemdCollector(conn *dbus.Conn) *systemdCollector {
 					desc:      prometheus.NewDesc("systemd_service_cpu_usage_nanoseconds_total", "Total CPU seconds of a unit", []string{"unit"}, nil),
 					valueType: prometheus.CounterValue,
 				},
+				"IPIngressBytes": metric{
+					desc:      prometheus.NewDesc("systemd_service_ip_ingress_bytes_total", "Ingress bytes total", []string{"unit"}, nil),
+					valueType: prometheus.CounterValue,
+				},
+				"IPIngressPackets": metric{
+					desc:      prometheus.NewDesc("systemd_service_ip_ingress_packets_total", "Ingress packets total", []string{"unit"}, nil),
+					valueType: prometheus.CounterValue,
+				},
+				"IPEgressBytes": metric{
+					desc:      prometheus.NewDesc("systemd_service_ip_egress_bytes_total", "Egress bytes total", []string{"unit"}, nil),
+					valueType: prometheus.CounterValue,
+				},
+				"IPEgressPackets": metric{
+					desc:      prometheus.NewDesc("systemd_service_ip_eggress_packets_total", "Eggress packets total", []string{"unit"}, nil),
+					valueType: prometheus.CounterValue,
+				},
 				"MemoryCurrent": metric{
 					desc:      prometheus.NewDesc("systemd_service_memory_current_bytes", "Amount of bytes", []string{"unit"}, nil),
+					valueType: prometheus.GaugeValue,
+				},
+				"TasksCurrent": metric{
+					desc:      prometheus.NewDesc("systemd_service_tasks_current", "amount of tasks. Includes both user processes and kernel threads.", []string{"unit"}, nil),
 					valueType: prometheus.GaugeValue,
 				},
 			},
